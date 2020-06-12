@@ -1,33 +1,24 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+import requests
 import time
 
 def checkprice(link,type):
 
-    options = webdriver.ChromeOptions()
-    options.add_argument("start-maximized")
-    options.add_experimental_option("excludeSwitches",["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
-    web = webdriver.Chrome(options=options)
-    wait = WebDriverWait(web,10)
+    a = 1
+    try:
+        if(type=="Flipkart"):
+            html_doc = requests.get(link, headers=headers).text
+            soup = BeautifulSoup(html_doc,'html.parser')
+            price_tag = soup.find("div", "_1vC4OE _3qQ9m1").text
+            a = str(price_tag)[1:]
+        else:
+            html_doc = requests.get(link, headers=headers).text
+            soup = BeautifulSoup(html_doc,'html.parser')
+            price_tag = soup.find("span", "a-size-medium a-color-price priceBlockBuyingPriceString").text
+            a = str(price_tag)[2:]
+    except:
+        pass
 
-    if(type=="Flipkart"):
-        print(link)
-        web.get(link)
-        time.sleep(3)
-        a = web.find_element_by_xpath("/html/body/div[1]/div/div[3]/div[2]/div[1]/div[2]/div[2]/div/div[4]/div[1]/div/div[1]").text
-        a = str(a)[1:]
-    else:
-        print(link)
-        web.get(link)
-        time.sleep(3)
-        a = web.find_element_by_xpath("/html/body/div[2]/div[2]/div[4]/div[5]/div[4]/div[9]/div[1]/div/table/tbody/tr[2]/td[2]/span[1]").text
-        a = str(a)[2:]
-
-    web.close()
     return a

@@ -54,6 +54,7 @@ def probe():
             with open(path) as f:
                 link = f.read()
             datum = helper.checkprice(link,type)
-            save_data(path,datum)
+            if(datum!=1):
+                save_data(path,datum)
 
 probe()
